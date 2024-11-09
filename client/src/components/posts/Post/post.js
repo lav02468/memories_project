@@ -18,16 +18,39 @@ const StyledMedia = styled(CardMedia)({
     backgroundBlendMode: 'darken',
 });
 
-const Post = () => {
+const Post = ({ post }) => {
+    console.log('Post data:', post);
+
+    if (!post) {
+        return (
+            <StyledCard>
+                <CardContent>
+                    <Typography variant="h6">Loading...</Typography>
+                </CardContent>
+            </StyledCard>
+        );
+    }
+
     return (
         <StyledCard>
+            {post.selectedFile && (
+                <StyledMedia
+                    image={post.selectedFile}
+                    title={post.title || 'Untitled'}
+                />
+            )}
             <CardContent>
-                <Typography variant="h6">Post Title</Typography>
-                <Typography variant="body2">Post Description</Typography>
+                <Typography variant="h6">{post.title || 'Untitled'}</Typography>
+                <Typography variant="body2">{post.message || 'No description'}</Typography>
+                <Typography variant="body2">Created by: {post.creator || 'Unknown'}</Typography>
             </CardContent>
             <CardActions>
-                <Button size="small" color="primary">Like</Button>
-                <Button size="small" color="primary">Delete</Button>
+                <Button size="small" color="primary" onClick={() => console.log('Like clicked')}>
+                    Like {post.likeCount || 0}
+                </Button>
+                <Button size="small" color="primary" onClick={() => console.log('Delete clicked')}>
+                    Delete
+                </Button>
             </CardActions>
         </StyledCard>
     );

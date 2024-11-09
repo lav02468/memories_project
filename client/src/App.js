@@ -4,6 +4,9 @@ import { styled } from '@mui/material/styles';
 import Posts from './components/posts/Posts';
 import Form from './components/posts/Form/Form';
 import memories from './images/memories.png';
+import { useDispatch } from 'react-redux';
+import { useEffect } from 'react';
+import { getPosts } from './actions/posts';
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
   borderRadius: 15,
@@ -25,6 +28,12 @@ const StyledImage = styled('img')({
 });
 
 const App = () => {
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(getPosts());
+    }, [dispatch]);
+
     return (
         <Container maxWidth="lg">
             <StyledAppBar position="static" color="inherit">
