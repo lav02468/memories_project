@@ -1,6 +1,10 @@
 import React from 'react';
 import { Card, CardActions, CardContent, CardMedia, Button, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import ThumbUpAltIcon from '@mui/icons-material/ThumbUpAlt';
+import DeleteIcon from '@mui/icons-material/Delete';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import moment from 'moment';
 
 const StyledCard = styled(Card)({
     display: 'flex',
@@ -31,6 +35,17 @@ const Post = ({ post }) => {
         );
     }
 
+    const renderTags = () => {
+        if (!post.tags) return '';
+        if (typeof post.tags === 'string') {
+            return post.tags.split(',').map((tag) => `#${tag.trim()} `).join(' ');
+        }
+        if (Array.isArray(post.tags)) {
+            return post.tags.map((tag) => `#${tag.trim()} `).join(' ');
+        }
+        return '';
+    };
+
     return (
         <StyledCard>
             {post.selectedFile && (
@@ -40,15 +55,42 @@ const Post = ({ post }) => {
                 />
             )}
             <CardContent>
-                <Typography variant="h6">{post.title || 'Untitled'}</Typography>
-                <Typography variant="body2">{post.message || 'No description'}</Typography>
-                <Typography variant="body2">Created by: {post.creator || 'Unknown'}</Typography>
+                <Typography variant="h6">{post.creator || 'Unknown Creator'}</Typography>
+                <Typography variant="body2">
+                    {post.createdAt ? moment(post.createdAt).fromNow() : 'Just now'}
+                </Typography>
+                <Button
+                    style={{ position: 'absolute', top: '20px', right: '20px' }}
+                    size="small"
+                    onClick={() => console.log('Edit clicked')}
+                >
+                    <MoreHorizIcon fontSize="medium" />
+                </Button>
+                <Typography variant="body2" color="textSecondary">
+                    {renderTags()}
+                </Typography>
+                <Typography variant="h5" gutterBottom>
+                    {post.title || 'Untitled'}
+                </Typography>
+                <Typography variant="body2" color="textSecondary" component="p">
+                    {post.message || 'No message'}
+                </Typography>
             </CardContent>
             <CardActions>
-                <Button size="small" color="primary" onClick={() => console.log('Like clicked')}>
+                <Button 
+                    size="small" 
+                    color="primary" 
+                    onClick={() => console.log('Like clicked')}
+                    startIcon={<ThumbUpAltIcon />}
+                >
                     Like {post.likeCount || 0}
                 </Button>
-                <Button size="small" color="primary" onClick={() => console.log('Delete clicked')}>
+                <Button 
+                    size="small" 
+                    color="primary" 
+                    onClick={() => console.log('Delete clicked')}
+                    startIcon={<DeleteIcon />}
+                >
                     Delete
                 </Button>
             </CardActions>
