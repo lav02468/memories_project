@@ -6,47 +6,37 @@ import postsRoutes from './routes/posts.js';
 
 const app = express();
 
-// Update CORS configuration
-app.use(cors({
-    origin: 'http://localhost:3000',
-    methods: ['GET', 'POST', 'PATCH', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization']
-}));
+// Debugging middleware
+app.use((req, res, next) => {
+    console.log(`${req.method} ${req.path}`);
+    next();
+});
 
-// Middleware
+// CORS configuration
+app.use(cors());
+
+// Body parser middleware
 app.use(bodyParser.json({ limit: "30mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 
 // Routes
 app.use('/posts', postsRoutes);
 
-// MongoDB Connection URL
-const connection_url = 'mongodb+srv://javascript:javascript123@cluster0.clz2m.mongodb.net/Cluster0?retryWrites=true&w=majority';
+const PORT = process.env.PORT || 5001; // Using port 5001
 
-// Try different ports if the default is in use
-const tryPort = (startPort) => {
-    const server = app.listen(startPort)
-        .on('error', (err) => {
-            if (err.code === 'EADDRINUSE') {
-                console.log(`Port ${startPort} is busy, trying ${startPort + 1}`);
-                server.close();
-                tryPort(startPort + 1);
-            }
-        })
-        .on('listening', () => {
-            const port = server.address().port;
-            console.log(`Server successfully running on port: ${port}`);
-        });
-};
-
-// Connect to MongoDB and Start Server
-mongoose.connect(connection_url)
+mongoose.connect('mongodb+srv://javascript:javascript123@cluster0.clz2m.mongodb.net/Cluster0?retryWrites=true&w=majority')
     .then(() => {
-        console.log('Connected to MongoDB');
-        tryPort(5000);
+        app.listen(PORT, () => {
+            console.log(`Server running on port: ${PORT}`);
+            console.log('Connected to MongoDB');
+        });
     })
-    .catch((error) => {
-        console.error('MongoDB connection error:', error.message);
-    });
+    .catch((error) => console.log(error.message));
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({ message: 'Something went wrong!' });
+});
 
     
