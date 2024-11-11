@@ -1,94 +1,100 @@
 import React from 'react';
+import { useDispatch } from 'react-redux';
 import { Card, CardActions, CardContent, CardMedia, Button, Typography } from '@mui/material';
-import { styled } from '@mui/material/styles';
 import ThumbUpAltIcon from '@mui/icons-material/ThumbUpAlt';
 import DeleteIcon from '@mui/icons-material/Delete';
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import moment from 'moment';
+import { deletePost, likePost } from '../../../actions/posts';
+import { styled } from '@mui/material/styles';
 
-const StyledCard = styled(Card)({
+// Define styled components instead
+const StyledCard = styled(Card)(({ theme }) => ({
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
     borderRadius: '15px',
     height: '100%',
     position: 'relative',
-});
+}));
 
 const StyledMedia = styled(CardMedia)({
     height: 0,
-    paddingTop: '56.25%',
+    paddingTop: '56.25%', // 16:9
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     backgroundBlendMode: 'darken',
 });
 
-const Post = ({ post }) => {
+const Overlay = styled('div')({
+    position: 'absolute',
+    top: '20px',
+    left: '20px',
+    color: 'white',
+});
+
+const Overlay2 = styled('div')({
+    position: 'absolute',
+    top: '20px',
+    right: '20px',
+    color: 'white',
+});
+
+const Details = styled('div')({
+    display: 'flex',
+    justifyContent: 'space-between',
+    margin: '20px',
+});
+
+const CardContentStyled = styled(CardContent)({
+    padding: '0 16px 16px 16px',
+});
+
+const Post = ({ post, setCurrentId }) => {
+    const dispatch = useDispatch();
     console.log('Post data:', post);
 
     if (!post) {
-        return (
-            <StyledCard>
-                <CardContent>
-                    <Typography variant="h6">Loading...</Typography>
-                </CardContent>
-            </StyledCard>
-        );
+        return null;
     }
-
-    const renderTags = () => {
-        if (!post.tags) return '';
-        if (typeof post.tags === 'string') {
-            return post.tags.split(',').map((tag) => `#${tag.trim()} `).join(' ');
-        }
-        if (Array.isArray(post.tags)) {
-            return post.tags.map((tag) => `#${tag.trim()} `).join(' ');
-        }
-        return '';
-    };
 
     return (
         <StyledCard>
-            {post.selectedFile && (
-                <StyledMedia
-                    image={post.selectedFile}
-                    title={post.title || 'Untitled'}
-                />
-            )}
-            <CardContent>
+            <StyledMedia
+                image={post.selectedFile}
+                title={post.title || 'Untitled'}
+            />
+            <Overlay>
                 <Typography variant="h6">{post.creator || 'Unknown Creator'}</Typography>
                 <Typography variant="body2">
                     {post.createdAt ? moment(post.createdAt).fromNow() : 'Just now'}
                 </Typography>
-                <Button
-                    style={{ position: 'absolute', top: '20px', right: '20px' }}
-                    size="small"
-                    onClick={() => console.log('Edit clicked')}
+            </Overlay>
+            <Overlay2>
+                <Button 
+                    style={{ color: 'white' }} 
+                    size="small" 
+                    onClick={() => setCurrentId(post._id)}
                 >
-                    <MoreHorizIcon fontSize="medium" />
+                    Edit
                 </Button>
+            </Overlay2>
+            <Details>
                 <Typography variant="body2" color="textSecondary">
-                    {renderTags()}
+                    {post.tags && post.tags.map((tag) => `#${tag} `)}
                 </Typography>
-                <Typography variant="h5" gutterBottom>
-                    {post.title || 'Untitled'}
+            </Details>
+            <CardContentStyled>
+                <Typography variant="body2" component="p">
+                    {post.message}
                 </Typography>
-                <Typography variant="body2" color="textSecondary" component="p">
-                    {post.message || 'No message'}
-                </Typography>
-            </CardContent>
-            <CardActions>
-                <Button 
-                    size="small" 
-                    color="primary" 
-                    onClick={() => console.log('Like clicked')}
-                    startIcon={<ThumbUpAltIcon />}
-                >
-                    Like {post.likeCount || 0}
+            </CardContentStyled>
+            <CardActions disableSpacing>
+                <Button size="small" color="primary" onClick={() => dispatch(likePost(post._id))}>
+                    <ThumbUpAltIcon fontSize="small" /> Like {post.likeCount || 0}
                 </Button>
                 <Button 
                     size="small" 
                     color="primary" 
-                    onClick={() => console.log('Delete clicked')}
+                    onClick={() => dispatch(deletePost(post._id))}
                     startIcon={<DeleteIcon />}
                 >
                     Delete
@@ -96,6 +102,6 @@ const Post = ({ post }) => {
             </CardActions>
         </StyledCard>
     );
-}
+};
 
 export default Post;

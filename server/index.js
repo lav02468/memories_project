@@ -24,7 +24,10 @@ app.use('/posts', postsRoutes);
 
 const PORT = process.env.PORT || 5001; // Using port 5001
 
-mongoose.connect('mongodb+srv://javascript:javascript123@cluster0.clz2m.mongodb.net/Cluster0?retryWrites=true&w=majority')
+mongoose.connect('mongodb+srv://javascript:javascript123@cluster0.clz2m.mongodb.net/Cluster0?retryWrites=true&w=majority', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+})
     .then(() => {
         app.listen(PORT, () => {
             console.log(`Server running on port: ${PORT}`);
