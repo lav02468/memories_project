@@ -4,7 +4,7 @@ const API = axios.create({
     baseURL: 'http://localhost:5001',
 });
 
-// Debug interceptor
+// Debug interceptor to log outgoing requests and responses
 API.interceptors.request.use((req) => {
     console.log('Outgoing Request:', {
         url: req.url,

@@ -5,9 +5,15 @@ const postsReducer = (posts = [], action) => {
         case 'CREATE':
             return [...posts, action.payload];
         case 'UPDATE':
+        case 'LIKE':
             return posts.map((post) => post._id === action.payload._id ? action.payload : post);
         case 'DELETE':
-            return posts.filter((post) => post._id !== action.payload);
+            console.log('DELETE action received in reducer');
+            console.log('Current posts:', posts);
+            console.log('Payload ID:', action.payload);
+            const filteredPosts = posts.filter((post) => post._id !== action.payload);
+            console.log('Filtered posts:', filteredPosts);
+            return filteredPosts;
         default:
             return posts;
     }

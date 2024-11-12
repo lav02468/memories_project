@@ -28,7 +28,6 @@ const StyledImage = styled('img')({
 
 const App = () => {
     const dispatch = useDispatch();
-
     const [currentId, setCurrentId] = useState(null);
 
     useEffect(() => {

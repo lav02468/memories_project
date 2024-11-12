@@ -30,10 +30,16 @@ export const updatePost = (id, post) => async (dispatch) => {
 
 export const deletePost = (id) => async (dispatch) => {
     try {
-        await api.deletePost(id);
-        dispatch({ type: 'DELETE', payload: id });
+        console.log('Attempting to delete post:', id); // Debug log
+        const response = await api.deletePost(id);
+        console.log('Server response:', response); // Debug log
+        
+        if (response.status === 200) {
+            dispatch({ type: 'DELETE', payload: id });
+            console.log('Post deleted successfully, state updated'); // Debug log
+        }
     } catch (error) {
-        console.error(error.message);
+        console.error('Error deleting post:', error);
     }
 };
 

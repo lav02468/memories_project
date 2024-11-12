@@ -6,7 +6,7 @@ import postsRoutes from './routes/posts.js';
 
 const app = express();
 
-// Debugging middleware
+// Debugging middleware to log incoming requests
 app.use((req, res, next) => {
     console.log(`${req.method} ${req.path}`);
     next();
